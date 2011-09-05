@@ -25,13 +25,13 @@ class Linux:
 
     def parse_inodes(self):
         self.fields = ('inodes', 'used', 'free', 'percent', 'mount')
-        return utils.parse_storage(self.get_inodes(), self.fields)
+        return utils.parser_storage(self.get_inodes(), self.fields)
 
     def parse_usage(self):
         self.fields = ('size', 'used', 'free', 'percent', 'mount')
-        return utils.parse_storage(self.get_usage(), self.fields)
+        return utils.parser_storage(self.get_usage(), self.fields)
 
-    def parse_iostat(self):
+    def parser_iostat(self):
         '''
         tps - transfers per second
         kbrs (kB_read/s) - amount of data read from the device expressed in kilobytes per second
@@ -44,7 +44,7 @@ class Linux:
         svctm - The average service time (in milliseconds) for I/O requests that were issued to the device.
         '''
         self.fields = ('tps', 'kbrs', 'kbws', 'kbr', 'kbw', 'avgrq-sz', 'avgqu-sz', 'await', 'svctm')
-        return utils.parse_iostat(self.get_iostat(), self.fields)
+        return utils.parser_iostat(self.get_iostat(), self.fields)
 
 class FreeBSD:
     '''
@@ -61,7 +61,7 @@ class FreeBSD:
 
     def parse_usage(self):
         self.fields('blocks', 'used', 'avail', 'percent', 'mount')
-        return utils.parse_storage(self.get_inodes(), self.fields)
+        return utils.parser_storage(self.get_inodes(), self.fields)
 
     def get_inodes(self):
         return utils.run(self.usage)
@@ -74,12 +74,12 @@ class FreeBSD:
 
     def parse_inodes(self):
         self.fields('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
-        return utils.parse_storage(self.get_inodes(), self.fields)
+        return utils.parser_storage(self.get_inodes(), self.fields)
 
     def parse_usage(self):
         return self.parse_inodes()
 
-    def parse_iostat(self):
+    def parser_iostat(self):
         '''
         rs (r/s) - read operations per second
         ws (w/s) - write operations per second
@@ -90,7 +90,7 @@ class FreeBSD:
         b (%b) - % of time the device had one or more outstanding transactions
         '''
         self.fields('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
-        return utils.parse_iostat(self.get_iostat(), self.fields)
+        return utils.parser_iostat(self.get_iostat(), self.fields)
 
 if __name__ == '__main__':
     print "not yet"
