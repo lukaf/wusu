@@ -11,7 +11,7 @@ def run(cmd):
         return p.communicate()[0]
     return p.communicate()[1]
 
-def parse_storage(data, fields):
+def parser_storage(data, fields):
     '''Parse storage data.'''
     parsed = {}
     # Transform data to array and remove header and an empty line at the end.
@@ -23,7 +23,7 @@ def parse_storage(data, fields):
             parsed[item[0]][fields[i-1]] = item[i]
     return parsed
 
-def parse_iostat(data, fields):
+def parser_iostat(data, fields):
     '''Parse iostat output on Linux.'''
     parsed = {}
     # Transform data to array and remove header (3 lines in Linux, 2 in FreeBSD) and an empty line at the end.
