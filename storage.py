@@ -60,7 +60,7 @@ class FreeBSD:
         self.fields = None
 
     def parse_usage(self):
-        self.fields('blocks', 'used', 'avail', 'percent', 'mount')
+        self.fields = ('blocks', 'used', 'avail', 'percent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
     def get_inodes(self):
@@ -73,7 +73,7 @@ class FreeBSD:
         return utils.run(self.iostat)
 
     def parse_inodes(self):
-        self.fields('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
+        self.fields = ('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
     def parse_usage(self):
@@ -89,7 +89,7 @@ class FreeBSD:
         svc_t - average duration of transactions, in milliseconds
         b (%b) - % of time the device had one or more outstanding transactions
         '''
-        self.fields('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
+        self.fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
         return utils.parser_iostat(self.get_iostat(), self.fields)
 
 if __name__ == '__main__':
