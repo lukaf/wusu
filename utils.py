@@ -31,7 +31,6 @@ def parser_iostat(data, fields):
         data = data.split('\n')[3:-2]
     if os.uname()[0] == 'FreeBSD':
         data = data.split('\n')[2:-1]
-    print data
     for item in data:
         item = item.split()
         parsed[item[0]] = {}
