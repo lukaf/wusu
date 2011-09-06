@@ -47,7 +47,7 @@ def parser_uptime(data):
     seconds = seconds % 3600
     minutes = seconds / 60
     seconds = seconds % 60
-    return (days, hours, minutes, seconds int(data))
+    return (days, hours, minutes, seconds, int(data))
 
 if __name__ == '__main__':
     print "not yet!"
