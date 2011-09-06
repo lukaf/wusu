@@ -31,7 +31,7 @@ class Linux:
         self.fields = ('size', 'used', 'free', 'percent', 'mount')
         return utils.parser_storage(self.get_usage(), self.fields)
 
-    def parser_iostat(self):
+    def parse_iostat(self):
         '''
         tps - transfers per second
         kbrs (kB_read/s) - amount of data read from the device expressed in kilobytes per second
@@ -79,7 +79,7 @@ class FreeBSD:
     def parse_usage(self):
         return self.parse_inodes()
 
-    def parser_iostat(self):
+    def parse_iostat(self):
         '''
         rs (r/s) - read operations per second
         ws (w/s) - write operations per second
