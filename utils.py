@@ -39,5 +39,15 @@ def parser_iostat(data, fields):
             parsed[item[0]][fields[i-1]] = item[i]
     return parsed
 
+def parser_uptime(data):
+    seconds = int(data)
+    days = seconds / 86400
+    seconds = seconds % 86400
+    hours = seconds / 3600
+    seconds = seconds % 3600
+    minutes = seconds / 60
+    seconds = seconds % 60
+    return (days, hours, minutes, seconds int(data))
+
 if __name__ == '__main__':
     print "not yet!"
