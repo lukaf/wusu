@@ -24,15 +24,64 @@ class Linux:
         return utils.run(self.iostat)
 
     def parse_inodes(self):
+        '''
+        Parsed output of get_inodes()
+        Structure is dictionary of dictionaries:
+        {device: {'mount': value, 'used': value, 'percent': value, 'free': value, 'inodes': value}}
+        {device:
+            {'mount': value,
+            'used': value,
+            'percent': value,
+            'free': value,
+            'inodes': value}
+        }
+
+        mount - mount point
+        used - amount of used inodes
+        percent - amount of used inodes in percent
+        free - amount of free inodes
+        inodes - amount of all inodes
+        '''
         self.fields = ('inodes', 'used', 'free', 'percent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
     def parse_usage(self):
+        '''
+        Parsed output of get_usage().
+        Structure is dictionary of dictionaries:
+        {device:
+            {'mount': value,
+            'used: value,
+            'percent': value,
+            'free': value,
+            'size': value}
+        }
+
+        mount - mount point
+        used - amount of used disk space in Kb
+        percent - amount of used disk space in percent
+        free - amount of free disk space in Kb
+        size - amount of all disk space in kB
+        '''
         self.fields = ('size', 'used', 'free', 'percent', 'mount')
         return utils.parser_storage(self.get_usage(), self.fields)
 
     def parse_iostat(self):
         '''
+        Parsed output of get_iostat().
+        Structure is dictionary of dictionaries:
+        {device: 
+            {'tps': value,
+            'kbrs': value,
+            'kbws': value,
+            'kbr': value,
+            'kbw': value,
+            'avgrq-sz': value,
+            'avgqu-sz': value,
+            'await': value,
+            'svctm': value}
+        }
+
         tps - transfers per second
         kbrs (kB_read/s) - amount of data read from the device expressed in kilobytes per second
         kbws (kB_wrtn/s) - amount of data written to the device expressed in kilobytes per second
@@ -59,28 +108,63 @@ class FreeBSD:
         self.iostat = 'iostat -d -x -K %s' % self.path
         self.fields = None
 
-    def parse_usage(self):
-        self.fields = ('blocks', 'used', 'avail', 'percent', 'mount')
-        return utils.parser_storage(self.get_inodes(), self.fields)
-
     def get_inodes(self):
+        '''Usage and inodes info.'''
         return utils.run(self.usage)
 
     def get_usage(self):
+        '''See get_inodes().'''
         return self.get_inodes()
 
     def get_iostat(self):
+        '''IOstat info.'''
         return utils.run(self.iostat)
 
     def parse_inodes(self):
+        '''
+        Parsed output of get_inodes().
+        Structure is dictionary of dictionaries:
+        {device:
+            {'blocks': value,
+            'used': value,
+            'free': value,
+            'percent': value,
+            'iused': value,
+            'ifree': value,
+            'ipercent': value,
+            'mount': value}
+        }
+
+        blocks - amount of all 1k blocks
+        used - amount of used disk space in Kb
+        free - amount of free disk space in Kb
+        percent - amount of used disk space in percent
+        iused - amount of used inodes
+        ifree - amount of free inodes
+        ipercent - amount of used inodes in percent
+        mount - mount point
+        '''
         self.fields = ('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
     def parse_usage(self):
+        '''See parse_inodes().'''
         return self.parse_inodes()
 
     def parse_iostat(self):
         '''
+        Parsed output of get_inodes().
+        Structure is dictionary of dictionaries.
+        {device:
+            {'rs': value,
+            'ws': value,
+            'krs': value,
+            'kws': value,
+            'wait': value,
+            'svc_t': value,
+            'b': value}
+        }
+
         rs (r/s) - read operations per second
         ws (w/s) - write operations per second
         krs (kr/s) - kilobytes read per second
