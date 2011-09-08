@@ -25,8 +25,8 @@ class Linux:
 
     def parse_inodes(self):
         '''
-        Parsed output of get_inodes()
-        Structure is dictionary of dictionaries:
+        Parse output of get_inodes()
+        Returned structure is a dictionary of dictionaries:
         {device: {'mount': value, 'used': value, 'percent': value, 'free': value, 'inodes': value}}
         {device:
             {'mount': value,
@@ -47,8 +47,8 @@ class Linux:
 
     def parse_usage(self):
         '''
-        Parsed output of get_usage().
-        Structure is dictionary of dictionaries:
+        Parse output of get_usage().
+        Returned structure is a dictionary of dictionaries:
         {device:
             {'mount': value,
             'used: value,
@@ -68,8 +68,8 @@ class Linux:
 
     def parse_iostat(self):
         '''
-        Parsed output of get_iostat().
-        Structure is dictionary of dictionaries:
+        Parse output of get_iostat().
+        Returned structure is a dictionary of dictionaries:
         {device: 
             {'tps': value,
             'kbrs': value,
@@ -122,8 +122,8 @@ class FreeBSD:
 
     def parse_inodes(self):
         '''
-        Parsed output of get_inodes().
-        Structure is dictionary of dictionaries:
+        Parse output of get_inodes().
+        Returned structure is a dictionary of dictionaries:
         {device:
             {'blocks': value,
             'used': value,
@@ -153,8 +153,8 @@ class FreeBSD:
 
     def parse_iostat(self):
         '''
-        Parsed output of get_inodes().
-        Structure is dictionary of dictionaries.
+        Parse output of get_inodes().
+        Returned structure is a dictionary of dictionaries.
         {device:
             {'rs': value,
             'ws': value,
