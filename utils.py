@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import subprocess as sub
-import os
+import os, re
 
 def run(cmd):
     cmd = cmd.split()
@@ -47,6 +47,16 @@ def parser_uptime(data):
     minutes = seconds / 60
     seconds = seconds % 60
     return (days, hours, minutes, seconds, int(data))
+
+def parser_meminfo(data, fields):
+    '''Parse memory, swap data.'''
+    parsed = {}
+    data = data.split('\n')
+    for item in data:
+        for field in fields:
+            if re.match(field, item):
+                parsed[item.split()[0][:-1]] = item.split()[1]
+    return parsed
 
 if __name__ == '__main__':
     print "not yet!"
