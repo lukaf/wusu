@@ -4,23 +4,22 @@ import utils
 
 class Linux:
     def __init__(self):
-        self.seconds = 0
         self.memdata = '/proc/meminfo'
-        self.array = []
-        self.mem_fields = None
 
     def get_uptime(self):
         '''
         Get machine uptime in seconds as provided by /proc/uptime.
+        Also see parse_uptime().
         '''
         f = open('/proc/uptime', 'r', 0)
-        self.seconds = float(f.read().split()[0])
+        seconds = float(f.read().split()[0])
         f.close()
         return self.seconds
 
     def get_meminfo(self):
         '''
         Get memory information from /proc/meminfo.
+        Also see parse_meminfo().
         '''
         f = open(self.memdata, 'r', 0)
         data = f.read()
@@ -35,35 +34,36 @@ class Linux:
         '''
         return utils.parser_uptime(self.get_uptime())
 
-    def parse_memory(self):
+    def parse_memory(self, mem_fields=('MemTotal', 'MemFree')):
         '''
         Parse memory info from output of get_meminfo().
-        Returned key, value pairs depend on keywords defined in self.mem_fields.
+        Returned key, value pairs depend on keywords defined in mem_fields,
+        which MUST be a tuple:
+        self.parse_memory(('MemTotal',))
+        Search is case sensitive.
 
         Returned structure is a dictionary:
         {key: value, ...}
         '''
-        self.mem_fields = ('MemTotal', 'MemFree')
-        return utils.parser_meminfo(self.get_meminfo(), self.mem_fields)
+        return utils.parser_meminfo(self.get_meminfo(), mem_fields)
 
-    def parse_swap(self):
+    def parse_swap(self, mem_fields=('SwapTotal', 'SwapFree')):
         '''
         Parse swap info from output of get_meminfo().
-        Returned key, value pairs depend on keywords defined in self.mem_fields.
+        Returned key, value pairs depend on keywords defined in mem_fields,
+        which MUST be a tuple:
+        self.parse_swap(('SwapTotal',))
+        Search is case sensitive.
 
         Returned structure is a dictionary.
         {key: value, ...}
         '''
-        self.mem_fields = ('SwapTotal', 'SwapFree')
-        return utils.parser_meminfo(self.get_meminfo(), self.mem_fields)
+        return utils.parser_meminfo(self.get_meminfo(), mem_fields)
 
 class FreeBSD:
     def __init__(self, libc='/lib/libc.so.7'):
-        self.seconds = 0
         self.memdata = 'sysctl vm'
-        self.data = None
         self.libc = libc
-        self.lib = None
 
     def get_uptime(self):
         '''
@@ -75,16 +75,16 @@ class FreeBSD:
         #define CLOCK_UPTIME_FAST       8       /* FreeBSD-specific. */
         '''
         from ctypes import Structure, cdll, byref, c_long
-        self.lib = cdll.LoadLibrary(self.libc)
+        lib = cdll.LoadLibrary(self.libc)
         class Data(Structure):
             _fields_ = [('sec', c_long), ('nsec', c_long)]
-        self.data = Data()
-        self.lib.clock_gettime(7, byref(self.data))
-        return self.data.sec
+        struct = Data()
+        lib.clock_gettime(7, byref(struct))
+        return struct
 
     def get_meminfo(self):
         '''
-        Get memory information. Command defined in self.memdata.'
+        Get memory information.
         '''
         return utils.run(self.memdata)
 
@@ -96,17 +96,18 @@ class FreeBSD:
         '''
         return utils.parser_uptime(self.get_uptime())
 
-    def parse_memory(self):
+    def parse_memory(self, mem_fields=('vm.stats.vm.v_page_count', 'vm.stats.vm.v_free_count', 'vm.stats.vm.v_inactive_count', 'vm.stats.vm.v_cache_count')):
         '''
         Parse output from get_meminfo().
-        Returned key, value pairs depend on keywords defined inf self.mem_fields.
+        Returned key, value pairs depend on keywords defined in mem_fields,
+        which MUST be a tuple:
+        self.parse_memory(('vm.stats.vm.v_page_count',))
+        Search is case sensitive.
 
         Returned structure is a dictionary.
         {key: value, ...}
         '''
-        self.mem_fields('vm.stats.vm.v_page_count', 'vm.stats.vm.v_free_count', 'vm.stats.vm.v_ina
-        ctive_count', 'vm.stats.vm.v_cache_count')
-        return utils.parser_meminof(self.get_meminfo(), self.mem_fields)
+        return utils.parser_meminof(self.get_meminfo(), mem_fields)
 
 if __name__ == '__main__':
     print "not yet"
