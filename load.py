@@ -80,7 +80,7 @@ class FreeBSD:
             _fields_ = [('sec', c_long), ('nsec', c_long)]
         struct = Data()
         lib.clock_gettime(7, byref(struct))
-        return struct
+        return struct.sec
 
     def get_meminfo(self):
         '''
