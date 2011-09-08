@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import utils
-import re
 
 class Linux:
     def __init__(self):
