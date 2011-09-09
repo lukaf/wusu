@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import subprocess as sub
 import os, re
 
