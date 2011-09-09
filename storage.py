@@ -7,7 +7,7 @@ class Linux:
     def __init__(self, path=''):
         self.path = path
         self.inodes = 'df -i -P %s' % self.path
-        self.usage = 'df -k -P %s' % self.path
+        self.fsusage = 'df -k -P %s' % self.path
         self.iostat = 'iostat -d -N -k -x %s' % self.path
         self.fields = None
 
@@ -15,9 +15,9 @@ class Linux:
         '''Inodes info.'''
         return utils.run(self.inodes)
 
-    def get_usage(self):
+    def get_fsusage(self):
         '''Usage info in Kb.'''
-        return utils.run(self.usage)
+        return utils.run(self.fsusage)
 
     def get_iostat(self):
         '''IOstat info.'''
@@ -27,7 +27,6 @@ class Linux:
         '''
         Parse output of get_inodes()
         Returned structure is a dictionary of dictionaries:
-        {device: {'mount': value, 'used': value, 'percent': value, 'free': value, 'inodes': value}}
         {device:
             {'mount': value,
             'used': value,
@@ -45,9 +44,9 @@ class Linux:
         self.fields = ('inodes', 'used', 'free', 'percent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
-    def parse_usage(self):
+    def parse_fsusage(self):
         '''
-        Parse output of get_usage().
+        Parse output of get_fsusage().
         Returned structure is a dictionary of dictionaries:
         {device:
             {'mount': value,
@@ -64,7 +63,7 @@ class Linux:
         size - amount of all disk space in kB
         '''
         self.fields = ('size', 'used', 'free', 'percent', 'mount')
-        return utils.parser_storage(self.get_usage(), self.fields)
+        return utils.parser_storage(self.get_fsusage(), self.fields)
 
     def parse_iostat(self):
         '''
@@ -99,20 +98,20 @@ class FreeBSD:
     '''
     FreeBSD related storage information.
     On FreeBSD inode information is appended to FS usage info,
-    that is why get_usage, get_inode and parse_usage, parse_inode
+    that is why get_fsusage, get_inode and parse_fsusage, parse_inode
     are the same.
     '''
     def __init__(self, path=''):
         self.path = path
-        self.usage = 'df -k -i %s' % self.path
+        self.fsusage = 'df -k -i %s' % self.path
         self.iostat = 'iostat -d -x -K %s' % self.path
         self.fields = None
 
     def get_inodes(self):
-        '''Usage and inodes info.'''
-        return utils.run(self.usage)
+        '''FS usage and inodes info.'''
+        return utils.run(self.fsusage)
 
-    def get_usage(self):
+    def get_fsusage(self):
         '''See get_inodes().'''
         return self.get_inodes()
 
@@ -147,7 +146,7 @@ class FreeBSD:
         self.fields = ('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
         return utils.parser_storage(self.get_inodes(), self.fields)
 
-    def parse_usage(self):
+    def parse_fsusage(self):
         '''See parse_inodes().'''
         return self.parse_inodes()
 
