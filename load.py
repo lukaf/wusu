@@ -4,6 +4,7 @@ class Linux:
     def __init__(self):
         self.memory = '/proc/meminfo'
         self.swap = '/proc/swaps'
+        self.loadavg = '/proc/loadavg'
 
     def get_uptime(self):
         '''
@@ -31,6 +32,13 @@ class Linux:
         Also see parse_swap().
         '''
         f = open(self.swap, 'r', 0)
+        data = f.read()
+        f.close()
+        return data
+
+    def get_loadavg(self):
+        '''Get load information from /proc/loadavg.'''
+        f = open(self.loadavg, 'r', 0)
         data = f.read()
         f.close()
         return data
@@ -70,10 +78,19 @@ class Linux:
         fields = ('type', 'size', 'used', 'priority')
         return utils.parser_swap(self.get_swap(), fields)
 
+    def parse_loadavg(self):
+        '''
+        Parse output of get_loadavg().
+        Returned structure is a tuple:
+        (1min, 5min, 15min)
+        '''
+        return utils.parser_loadavg(self.get_loadavg())
+
 class FreeBSD:
     def __init__(self, libc='/lib/libc.so.7'):
         self.memdata = 'sysctl vm.stats.vm'
         self.swapdata = 'pstat -s'
+        self.loadavg = 'sysctl -n vm.loadavg'
         self.libc = libc
 
     def get_uptime(self):
@@ -100,6 +117,10 @@ class FreeBSD:
     def get_swap(self):
         '''Get swap information.'''
         return utils.run(self.swapinfo)
+
+    def get_loadavg(self):
+        '''Get load average.'''
+        return utils.run(self.loadavg)
 
     def parse_uptime(self):
         '''
@@ -135,6 +156,14 @@ class FreeBSD:
         '''
         fields = ('blocks', 'used', 'free', 'percent')
         return utils.parse_swap(self.get_memory(), fields)
+
+    def parse_loadavg(self):
+        '''
+        Parse output of get_loadavg().
+        Returned structure is a tuple:
+        (1min, 5min, 15min)
+        '''
+        return utils.parser_loadavg(self.get_loadavg)
 
 if __name__ == '__main__':
     print "not yet"

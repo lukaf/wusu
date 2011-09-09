@@ -71,5 +71,14 @@ def parser_swap(data, fields):
             parsed[item[0]][fields[i-1]] = item[i]
     return parsed
 
+def parser_loadavg(data):
+    parsed = []
+    data = data.split()
+    for num in data:
+        # I don't like this not one bit!
+        if re.search('\.', num):
+            parsed.append(num)
+    return tuple(parsed)
+
 if __name__ == '__main__':
     print "not yet!"
