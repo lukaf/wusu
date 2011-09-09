@@ -52,12 +52,6 @@ print
 print "get_fsusage()"
 print a.get_fsusage()
 print
-print "get_loadavg()"
-print a.get_loadavg()
-print
-print "parse_loadavg()"
-print a.parse_loadavg()
-print
 EOF
 
 if [ $? = 0 ]; then
