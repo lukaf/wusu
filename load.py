@@ -155,7 +155,7 @@ class FreeBSD:
         }
         '''
         fields = ('blocks', 'used', 'free', 'percent')
-        return utils.parse_swap(self.get_memory(), fields)
+        return utils.parser_swap(self.get_memory(), fields)
 
     def parse_loadavg(self):
         '''
