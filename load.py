@@ -88,8 +88,8 @@ class Linux:
 
 class FreeBSD:
     def __init__(self, libc='/lib/libc.so.7'):
-        self.memdata = 'sysctl vm.stats.vm'
-        self.swapdata = 'pstat -s'
+        self.memory = 'sysctl vm.stats.vm'
+        self.swap = 'pstat -s'
         self.loadavg = 'sysctl -n vm.loadavg'
         self.libc = libc
 
@@ -112,11 +112,11 @@ class FreeBSD:
 
     def get_memory(self):
         '''Get memory information.'''
-        return utils.run(self.memdata)
+        return utils.run(self.memory)
 
     def get_swap(self):
         '''Get swap information.'''
-        return utils.run(self.swapinfo)
+        return utils.run(self.swap)
 
     def get_loadavg(self):
         '''Get load average.'''
@@ -155,7 +155,7 @@ class FreeBSD:
         }
         '''
         fields = ('blocks', 'used', 'free', 'percent')
-        return utils.parser_swap(self.get_memory(), fields)
+        return utils.parser_swap(self.get_swap(), fields)
 
     def parse_loadavg(self):
         '''
@@ -163,7 +163,7 @@ class FreeBSD:
         Returned structure is a tuple:
         (1min, 5min, 15min)
         '''
-        return utils.parser_loadavg(self.get_loadavg)
+        return utils.parser_loadavg(self.get_loadavg())
 
 if __name__ == '__main__':
     print "not yet"
