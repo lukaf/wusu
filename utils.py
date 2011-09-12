@@ -11,6 +11,8 @@ def run(cmd):
 
 def parser_storage(data, fields):
     '''Parse storage data.'''
+    if data == None:
+        return None
     parsed = {}
     # Transform data to array and remove header and an empty line at the end.
     data = data.split('\n')[1:-1]
@@ -27,7 +29,7 @@ def parser_iostat(data, fields):
     # Transform data to array and remove header (3 lines in Linux, 2 in FreeBSD) and an empty line at the end.
     if os.uname()[0] == 'Linux':
         data = data.split('\n')[3:-2]
-    if os.uname()[0] == 'FreeBSD':
+    if os.uname()[0] == 'FreeBSD' or os.uname()[0] == 'SunOS':
         data = data.split('\n')[2:-1]
     for item in data:
         item = item.split()
