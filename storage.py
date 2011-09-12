@@ -9,7 +9,6 @@ class Linux:
         self.inodes = 'df -i -P %s' % self.path
         self.fsusage = 'df -k -P %s' % self.path
         self.iostat = 'iostat -d -N -k -x %s' % self.path
-        self.fields = None
 
     def get_inodes(self):
         '''Inodes info.'''
@@ -41,8 +40,8 @@ class Linux:
         free - amount of free inodes
         inodes - amount of all inodes
         '''
-        self.fields = ('inodes', 'used', 'free', 'percent', 'mount')
-        return utils.parser_storage(self.get_inodes(), self.fields)
+        fields = ('inodes', 'used', 'free', 'percent', 'mount')
+        return utils.parser_storage(self.get_inodes(), fields)
 
     def parse_fsusage(self):
         '''
@@ -62,8 +61,8 @@ class Linux:
         free - amount of free disk space in Kb
         size - amount of all disk space in kB
         '''
-        self.fields = ('size', 'used', 'free', 'percent', 'mount')
-        return utils.parser_storage(self.get_fsusage(), self.fields)
+        fields = ('size', 'used', 'free', 'percent', 'mount')
+        return utils.parser_storage(self.get_fsusage(), fields)
 
     def parse_iostat(self):
         '''
@@ -91,8 +90,8 @@ class Linux:
         await - The average time (in milliseconds) for I/O requests issued to the device to be served. This includes the time  spent  by the requests in queue and the time spent servicing them.
         svctm - The average service time (in milliseconds) for I/O requests that were issued to the device.
         '''
-        self.fields = ('tps', 'kbrs', 'kbws', 'kbr', 'kbw', 'avgrq-sz', 'avgqu-sz', 'await', 'svctm')
-        return utils.parser_iostat(self.get_iostat(), self.fields)
+        fields = ('tps', 'kbrs', 'kbws', 'kbr', 'kbw', 'avgrq-sz', 'avgqu-sz', 'await', 'svctm')
+        return utils.parser_iostat(self.get_iostat(), fields)
 
 class FreeBSD:
     '''
@@ -105,7 +104,6 @@ class FreeBSD:
         self.path = path
         self.fsusage = 'df -k -i %s' % self.path
         self.iostat = 'iostat -d -x -K %s' % self.path
-        self.fields = None
 
     def get_inodes(self):
         '''FS usage and inodes info.'''
@@ -143,8 +141,8 @@ class FreeBSD:
         ipercent - amount of used inodes in percent
         mount - mount point
         '''
-        self.fields = ('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
-        return utils.parser_storage(self.get_inodes(), self.fields)
+        fields = ('blocks', 'used', 'free', 'percent', 'iused', 'ifree', 'ipercent', 'mount')
+        return utils.parser_storage(self.get_inodes(), fields)
 
     def parse_fsusage(self):
         '''See parse_inodes().'''
@@ -152,7 +150,7 @@ class FreeBSD:
 
     def parse_iostat(self):
         '''
-        Parse output of get_inodes().
+        Parse output of get_iostat().
         Returned structure is a dictionary of dictionaries.
         {device:
             {'rs': value,
@@ -172,8 +170,8 @@ class FreeBSD:
         svc_t - average duration of transactions, in milliseconds
         b (%b) - % of time the device had one or more outstanding transactions
         '''
-        self.fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
-        return utils.parser_iostat(self.get_iostat(), self.fields)
+        fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
+        return utils.parser_iostat(self.get_iostat(), fields)
 
 if __name__ == '__main__':
     print "not yet"
