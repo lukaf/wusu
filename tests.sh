@@ -46,11 +46,11 @@ print
 print "parse_iostat()"
 print a.parse_iostat()
 print
-print "parse_fsusage()"
-print a.parse_fsusage()
-print
 print "get_fsusage()"
 print a.get_fsusage()
+print
+print "parse_fsusage()"
+print a.parse_fsusage()
 print
 EOF
 
