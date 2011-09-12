@@ -138,6 +138,8 @@ class FreeBSD:
         self.parse_memory(('vm.stats.vm.v_page_count',))
         Search is case sensitive.
 
+        By default, returned values are pages of memory.
+
         Returned structure is a dictionary.
         {key: value, ...}
         '''
@@ -164,6 +166,92 @@ class FreeBSD:
         (1min, 5min, 15min)
         '''
         return utils.parser_loadavg(self.get_loadavg())
+
+class SunOS:
+    def __init__(self):
+        self.uptime = 'kstat -p unix:0:system_misc:boot_time'
+        self.loadavg = 'kstat -p unix:0:system_misc:avenrun*'
+        self.memory = 'kstat -p unix:0:system_pages'
+        self.swap = 'swap -l'
+
+    def get_uptime(self):
+        '''Get machine uptime.'''
+        return utils.run(self.uptime)
+
+    def get_memory(self):
+        '''Get memory info.'''
+        return utils.run(self.memory)
+
+    def get_swap(self):
+        '''Get swap info.'''
+        return utils.run(self.swap)
+
+    def get_loadavg(self):
+        '''Get load average.'''
+        return utils.run(self.loadavg)
+
+    def parse_uptime(self):
+        '''Parse output of get_uptime().'''
+        from time import time
+        return utils.parser_uptime(int(time()) - int(self.get_uptime().split()[-1]))
+
+    def parse_memory(self, mem_fields = ('unix:0:system_pages:physmem', 'unix:0:system_pages:freemem')):
+        '''
+        Parse output from get_memory().
+        Returned key, value pairs depend on keywords defined in mem_fields,
+        whish MUST be a tuple:
+        self.parse_memory(('unix:0:system_pages:physmem',))
+        Search is case sensitive.
+
+        By default, returned values are pages of memory.
+
+        Returned structure is a dictionary:
+        {key: value, ...}
+        '''
+        return utils.parser_memory(self.get_memory(), mem_fields)
+
+    def parse_swap(self):
+        '''
+        Parse output of get_swap().
+        Returned structure is a dictionary of dictionaries:
+        {path:
+            {'dev': value,
+            'swaplo': value,
+            'blocks': value,
+            'free': value}
+        }
+
+        path - The path name for the swap area.
+        dev - The major/minor device number in decimal if it is a block special device; zeroes otherwise.
+        swaplo - The swaplow value for the area in 512-byte blocks.
+        blocks - The swaplen value for the area in 512-byte blocks.
+        free - The number of 512-byte blocks in this area that are not currently allocated.
+        '''
+        fields = ('dev', 'swaplo', 'blocks', 'free')
+        return utils.parser_storage(self.get_swap(), fields)
+
+
+    def parse_loadavg(self):
+        '''
+        Parse output of get_loadavg().
+        Returned structure is a tuple:
+        (1min, 5min, 15min)
+
+        Values returned by get_loadavg() must be divided by the scale factor.
+        Scale factor is defined in /usr/include/sys/param.h:
+        /*
+        * Scale factor for scaled integers used to count
+        * %cpu time and load averages.
+        */
+        #define FSHIFT  8               /* bits to right of fixed binary point */
+        #define FSCALE  (1<<FSHIFT)
+        '''
+        data = self.get_loadavg()
+        data = data.split('\n')[:-1]
+        rvalue = []
+        for item in data:
+            rvalue.append(float(item.split()[-1]) / 256)
+        return tuple(rvalue)
 
 if __name__ == '__main__':
     print "not yet"

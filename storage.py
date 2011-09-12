@@ -173,5 +173,93 @@ class FreeBSD:
         fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
         return utils.parser_iostat(self.get_iostat(), fields)
 
+class SunOS:
+    def __init__(self, path = ''):
+        self.path = path
+        self.inodes = 'df -o i %s' % self.path
+        self.fsusage = 'df -k %s' % self.path
+        self.iostat = 'iostat -d -x %s' % self.path
+
+    def get_inodes(self):
+        '''Inodes info.'''
+        return utils.run(self.inodes)
+
+    def get_fsusage(self):
+        '''FS usage info.'''
+        return utils.run(self.fsusage)
+
+    def get_iostat(self):
+        '''IOstat info.'''
+        return utils.run(self.iostat)
+
+    def parse_inodes(self):
+        '''
+        Parse ouput of get_inodes().
+        Returned structure is a dictionary of dictionaries:
+        {device:
+            {'mount': value,
+            'used': value,
+            'free': value,
+            'percent': value}
+
+        mount - mount point
+        used - amount of used inodes
+        free - amount of free inodes
+        percent - amount of used inodes in percent
+        '''
+        fields = ('used', 'free', 'percent', 'mount')
+        return utils.parser_storage(self.get_inodes(), fields)
+
+    def parse_fsusage(self):
+        '''
+        Parse output of get_fsusage().
+        Returned structure is a dictionary of dictionaries:
+        {device:
+            {'kbytes': value,
+            'used': value,
+            'free': value,
+            'percent': value,
+            'mount': value}
+        }
+
+        kbytes - amount of all disk space in Kb
+        used - amount of used disk space in Kb
+        free - amount of free disk space in Kb
+        percent - amount of used disk space in percent
+        mount - mount point
+        '''
+        fields = ('kbytes', 'used', 'free', 'percent', 'mount')
+        return utils.parser_storage(self.get_fsusage(), fields)
+
+    def parse_iostat(self):
+        '''
+        Parse output of get_iostat().
+        Returned structure is a dictionary of dictionaries:
+        {device:
+            {'rs': value,
+            'ws': value,
+            'krs': value,
+            'kws': value,
+            'wait': value,
+            'actv': value,
+            'svc_t': value,
+            'w': value,
+            'b': value}
+        }
+
+        rs (r/s) - reads per second
+        ws (w/s) - writes per second
+        krs (kr/s) - kilobytes read per second
+        kws (kw/s) - kilobytes write per second
+        wait - average number of transactions waiting for service (queue length)
+        actv - average number of transactions actively being serviced  (removed
+            from  the  queue but not yet completed)
+        svc_t - average response time  of  transactions,  in  milliseconds
+        w - percent of time there are transactions waiting for service (queue not-empty)
+        b - percent of time the disk is busy (transactions in progress)
+        '''
+        fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'actv', 'svc_t', 'w', 'b')
+        return utils.parser_iostat(self.get_iostat(), fields)
+
 if __name__ == '__main__':
     print "not yet"
