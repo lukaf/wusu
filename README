@@ -20,8 +20,8 @@ FreeBSD:
  - pstat(8)
 
 SunOS:
- - kstat
- - swap
- - df
- - iostat
+ - kstat(1M)
+ - swap(1M)
+ - df(1M)
+ - iostat(1M)
 
