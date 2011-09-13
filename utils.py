@@ -1,6 +1,8 @@
 import subprocess as sub
 import os, re
 
+_sysname = os.uname()[0]
+
 def run(cmd):
     cmd = cmd.split()
     p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.STDOUT, universal_newlines=True)
@@ -27,15 +29,20 @@ def parser_iostat(data, fields):
     '''Parse iostat data.'''
     parsed = {}
     # Transform data to array and remove header (3 lines in Linux, 2 in FreeBSD) and an empty line at the end.
-    if os.uname()[0] == 'Linux':
+    if _sysname == 'Linux':
         data = data.split('\n')[3:-2]
-    if os.uname()[0] == 'FreeBSD' or os.uname()[0] == 'SunOS':
+    if _sysname == 'FreeBSD' or _sysname == 'SunOS':
         data = data.split('\n')[2:-1]
     for item in data:
         item = item.split()
-        parsed[item[0]] = {}
-        for i in range(1, len(fields)+1):
-            parsed[item[0]][fields[i-1]] = item[i]
+        if _sysname == 'SunOS':
+            parsed[item[-1]] = {}
+            for i in range(0, len(fields)):
+                parsed[item[-1]][fields[i]] = item[i]
+        else:
+            parsed[item[0]] = {}
+            for i in range(1, len(fields)+1):
+                parsed[item[0]][fields[i-1]] = item[i]
     return parsed
 
 def parser_uptime(data):
