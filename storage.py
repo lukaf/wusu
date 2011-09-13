@@ -178,7 +178,7 @@ class SunOS:
         self.path = path
         self.inodes = 'df -o i %s' % self.path
         self.fsusage = 'df -k %s' % self.path
-        self.iostat = 'iostat -n -x %s' % self.path
+        self.iostat = 'iostat -n -x -I %s' % self.path
 
     def get_inodes(self):
         '''Inodes info.'''
