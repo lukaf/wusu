@@ -142,6 +142,8 @@ class FreeBSD:
 
         Returned structure is a dictionary.
         {key: value, ...}
+
+        free = v_free_count + v_inactive_count + v_cache_count
         '''
         return utils.parser_memory(self.get_memory(), mem_fields)
 
