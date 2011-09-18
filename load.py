@@ -1,10 +1,12 @@
 import utils
+import os
 
 class Linux:
     def __init__(self):
         self.memory = '/proc/meminfo'
         self.swap = '/proc/swaps'
         self.loadavg = '/proc/loadavg'
+        self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
     def get_uptime(self):
         '''
@@ -92,6 +94,7 @@ class FreeBSD:
         self.swap = 'pstat -s'
         self.loadavg = 'sysctl -n vm.loadavg'
         self.libc = libc
+        self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
     def get_uptime(self):
         '''
@@ -173,6 +176,7 @@ class SunOS:
         self.loadavg = 'kstat -p unix:0:system_misc:avenrun*'
         self.memory = 'kstat -p unix:0:system_pages'
         self.swap = 'swap -l'
+        self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
     def get_uptime(self):
         '''Get machine uptime.'''
