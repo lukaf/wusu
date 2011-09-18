@@ -103,7 +103,7 @@ class FreeBSD:
     def __init__(self, path=''):
         self.path = path
         self.fsusage = 'df -k -i %s' % self.path
-        self.iostat = 'iostat -d -x -K %s' % self.path
+        self.iostat = 'iostat -d -x -K -I %s' % self.path
 
     def get_inodes(self):
         '''FS usage and inodes info.'''
@@ -178,7 +178,7 @@ class SunOS:
         self.path = path
         self.inodes = 'df -o i %s' % self.path
         self.fsusage = 'df -k %s' % self.path
-        self.iostat = 'iostat -d -x %s' % self.path
+        self.iostat = 'iostat -n -x -I %s' % self.path
 
     def get_inodes(self):
         '''Inodes info.'''
