@@ -256,7 +256,7 @@ class SunOS:
         data = data.split('\n')[:-1]
         rvalue = []
         for item in data:
-            rvalue.append('%.2f' % float(item.split()[-1]) / 256.00))
+            rvalue.append('%.2f' % float(item.split()[-1]) / 256.00)
         return tuple(rvalue)
 
 if __name__ == '__main__':
