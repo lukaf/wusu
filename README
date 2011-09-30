@@ -6,7 +6,7 @@ All of them are documented in docstrings of relevant
 functions.
 
 NOTE:
-dladm(1M), used for interface statistics on Solaris, requires root privleges.
+dladm(1M), used for interface statistics on Solaris, requires root privileges.
 
 For more information on where wusu gets it's data, user
 should consult the following manual pages:
