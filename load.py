@@ -6,6 +6,7 @@ class Linux:
         self.memory = '/proc/meminfo'
         self.swap = '/proc/swaps'
         self.loadavg = '/proc/loadavg'
+        self.ifstat = 'ip -s -o link'
         self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
     def get_uptime(self):
@@ -44,6 +45,10 @@ class Linux:
         data = f.read()
         f.close()
         return data
+
+    def get_ifstat(self):
+        '''Get interface statistics.'''
+        return utils.run(self.ifstat)
 
     def parse_uptime(self):
         '''
@@ -88,11 +93,32 @@ class Linux:
         '''
         return utils.parser_loadavg(self.get_loadavg())
 
+    def parse_ifstat(self):
+        '''
+        Parse output of get_ifstat().
+        Returned structure is a dictionary of dictionaries:
+        {device:
+            {'in':
+                {'bytes': value,
+                'packets': value,
+                'errors': value,
+                'dropped': value},
+            'out':
+                {'bytes': value,
+                'packets': value,
+                'errors': value,
+                'dropped': value},
+            }
+        }
+        '''
+        return utils.parser_ifstat(self.get_ifstat())
+
 class FreeBSD:
     def __init__(self, libc='/lib/libc.so.7'):
         self.memory = 'sysctl vm.stats.vm'
         self.swap = 'pstat -s'
         self.loadavg = 'sysctl -n vm.loadavg'
+        self.ifstat = 'netstat -i -d -b -n -W'
         self.libc = libc
         self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
@@ -124,6 +150,10 @@ class FreeBSD:
     def get_loadavg(self):
         '''Get load average.'''
         return utils.run(self.loadavg)
+
+    def get_ifstat(self):
+        '''Get interface statistics.'''
+        return utils.run(self.ifstat)
 
     def parse_uptime(self):
         '''
@@ -172,12 +202,35 @@ class FreeBSD:
         '''
         return utils.parser_loadavg(self.get_loadavg())
 
+    def parse_ifstat(self):
+        '''
+        Parse output of get_ifstat().
+        Returned structure is a dictionary of dictionaries of dictionaries of ...:
+        {device:
+            {address:
+                {'in':
+                    {'bytes': value,
+                    'packets': value,
+                    'errors': value,
+                    'dropped'value},
+                'out':
+                    {'bytes': value,
+                    'packets': value,
+                    'errors': value,
+                    'dropped': value}
+                }
+            }
+        }
+        '''
+        return utils.parser_ifstat(self.get_ifstat())
+
 class SunOS:
     def __init__(self):
         self.uptime = 'kstat -p unix:0:system_misc:boot_time'
         self.loadavg = 'kstat -p unix:0:system_misc:avenrun*'
         self.memory = 'kstat -p unix:0:system_pages'
         self.swap = 'swap -l'
+        self.ifstat = 'dladm show-link -s'
         self.pagesize = os.sysconf('SC_PAGE_SIZE')
 
     def get_uptime(self):
@@ -195,6 +248,10 @@ class SunOS:
     def get_loadavg(self):
         '''Get load average.'''
         return utils.run(self.loadavg)
+
+    def get_ifstat(self):
+        '''Get interface statistisc.'''
+        return utils.run(self.ifstat)
 
     def parse_uptime(self):
         '''Parse output of get_uptime().'''
@@ -256,8 +313,26 @@ class SunOS:
         data = data.split('\n')[:-1]
         rvalue = []
         for item in data:
-            rvalue.append('%.2f' % float(item.split()[-1]) / 256.00)
+            rvalue.append('%.2f' % (float(item.split()[-1]) / float(256)))
         return tuple(rvalue)
+
+    def parse_ifstat(self):
+        '''
+        Parse output of get_ifstat().
+        Returned structure is a dictionary of dictionaries:
+        {device:
+            {'in':
+                {'bytes': value,
+                'packets': value,
+                'errors': value},
+            'out':
+                {'bytes': value,
+                'packets': value,
+                'errors': value}
+            }
+        }
+        '''
+        return utils.parser_ifstat(self.get_ifstat())
 
 if __name__ == '__main__':
     print "not yet"

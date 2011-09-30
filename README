@@ -4,6 +4,10 @@ Some key values, notably in memory and iostat parsers,
 are consistent with their corresponding system utilities.
 All of them are documented in docstrings of relevant
 functions.
+
+NOTE:
+dladm(1M), used for interface statistics on Solaris, requires root privleges.
+
 For more information on where wusu gets it's data, user
 should consult the following manual pages:
 
@@ -11,6 +15,7 @@ Linux:
  - proc(5)
  - df(1)
  - iostat(1)
+ - ip(8)
 
 FreeBSD:
  - clock_gettime(2)
@@ -18,10 +23,12 @@ FreeBSD:
  - iostat(8)
  - sysctl(8)
  - pstat(8)
+ - netstat(1)
 
 SunOS:
  - kstat(1M)
  - swap(1M)
  - df(1M)
  - iostat(1M)
+ - dladm(1M)
 

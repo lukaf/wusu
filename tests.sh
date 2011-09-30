@@ -28,6 +28,12 @@ print
 print "parse_loadavg()"
 print a.parse_loadavg()
 print
+print "get_ifstat()"
+print a.get_ifstat()
+print
+print "parse_ifstat()"
+print a.parse_ifstat()
+print
 EOF
 
 echo "Test storage module ..."

@@ -69,9 +69,9 @@ def parser_memory(data, fields):
 def parser_swap(data, fields):
     '''Parse swap data.'''
     parsed = {}
-    if os.uname()[0] == "Linux":
+    if _sysname == 'Linux':
         data = data.split('\n')[1:-1]
-    if os.uname()[0] == 'FreeBSD':
+    if _sysname == 'FreeBSD':
         data = data.split('\n')[1:-2]
     for item in data:
         item = item.split()
@@ -88,6 +88,69 @@ def parser_loadavg(data):
         if re.search('\.', num):
             parsed.append(num)
     return tuple(parsed)
+
+def parser_ifstat(data):
+    parsed = {}
+    if _sysname == 'Linux':
+        data = data.split('\n')[:-1]
+    if _sysname == 'FreeBSD' or _sysname == 'SunOS':
+        data = data.split('\n')[1:-1]
+    for item in data:
+        item = item.split()
+        # Replace '-' (FreeBSD) and 'N/A' (SunOS) with '0'.
+        for i in range(0, len(item)):
+            if item[i] == '-' or item[i] == 'N/A':
+                item[i] = '0'
+        if _sysname == 'Linux':
+            parsed[item[1].strip(':')] = {
+                'in': {
+                    'bytes': item[-21],
+                    'packets': item[-20],
+                    'errors': item[-19],
+                    'dropped': item[-18]
+                },
+                'out': {
+                    'bytes:': item[-6],
+                    'packets': item[-5],
+                    'errors': item[-4],
+                    'dropped': item[-3]
+                }
+            }
+        if _sysname == 'FreeBSD':
+            if item[0] not in parsed:
+                parsed[item[0]] = {}
+            # With PPP, tunnel, pflog interfaces, netstat doesn't always display address info.
+            # Next field is always a counter - replace the value with NaN if we get a number.
+            if item[3].isdigit():
+                item[3] = 'NaN'
+            parsed[item[0]][item[3]] = {
+                'in': {
+                    'bytes': item[-6],
+                    'packets': item[-9],
+                    'errors': item[-8],
+                    'dropped': item[-7]
+                },
+                'out': {
+                    'bytes': item[-3],
+                    'packets': item[-5],
+                    'errors': item[-4],
+                    'dropped': item[-1]
+                }
+            }
+        if _sysname == 'SunOS':
+            parsed[item[0]] = {
+                'in': {
+                    'bytes': item[2],
+                    'packets': item[1],
+                    'errors': item[3],
+                },
+                'out': {
+                    'bytes': item[5],
+                    'packets': item[4],
+                    'errors': item[6]
+                }
+            }
+    return parsed
 
 if __name__ == '__main__':
     print "not yet!"
