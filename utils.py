@@ -19,10 +19,11 @@ def parser_storage(data, fields):
     # Transform data to array and remove header and an empty line at the end.
     data = data.split('\n')[1:-1]
     for item in data:
-        item = item.split()
-        parsed[item[0]] = {}
-        for i in range(1, len(fields)+1):
-            parsed[item[0]][fields[i-1]] = item[i]
+        if re.match('/', item):
+            item = item.split()
+            parsed[item[0]] = {}
+            for i in range(1, len(fields)+1):
+                parsed[item[0]][fields[i-1]] = item[i]
     return parsed
 
 def parser_iostat(data, fields):
