@@ -1,6 +1,6 @@
 import utils
 
-class Linux:
+class Linux(object):
     '''
     Linux related storage information.
     '''
@@ -93,7 +93,7 @@ class Linux:
         fields = ('tps', 'kbrs', 'kbws', 'kbr', 'kbw', 'avgrq-sz', 'avgqu-sz', 'await', 'svctm')
         return utils.parser_iostat(self.get_iostat(), fields)
 
-class FreeBSD:
+class FreeBSD(object):
     '''
     FreeBSD related storage information.
     On FreeBSD inode information is appended to FS usage info,
@@ -173,7 +173,7 @@ class FreeBSD:
         fields = ('rs', 'ws', 'krs', 'kws', 'wait', 'svc_t', 'b')
         return utils.parser_iostat(self.get_iostat(), fields)
 
-class SunOS:
+class SunOS(object):
     def __init__(self, path = ''):
         self.path = path
         self.inodes = 'df -o i %s' % self.path

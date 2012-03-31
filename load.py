@@ -1,7 +1,7 @@
 import utils
 import os
 
-class Linux:
+class Linux(object):
     def __init__(self):
         self.memory = '/proc/meminfo'
         self.swap = '/proc/swaps'
@@ -113,7 +113,7 @@ class Linux:
         '''
         return utils.parser_ifstat(self.get_ifstat())
 
-class FreeBSD:
+class FreeBSD(object):
     def __init__(self, libc='/lib/libc.so.7'):
         self.memory = 'sysctl vm.stats.vm'
         self.swap = 'pstat -s'
@@ -224,7 +224,7 @@ class FreeBSD:
         '''
         return utils.parser_ifstat(self.get_ifstat())
 
-class SunOS:
+class SunOS(object):
     def __init__(self):
         self.uptime = 'kstat -p unix:0:system_misc:boot_time'
         self.loadavg = 'kstat -p unix:0:system_misc:avenrun*'
